@@ -1,5 +1,11 @@
 @echo off
 
+echo Script: EvtxAnalyser
+echo Version: 1.0.0
+echo Author: outis
+echo Requires being in same directory as EvtxECmd.exe
+echo.
+
 :: Change to the directory where the script is located
 set "evtxecmd_dir=%~dp0"
 set "evtxecmd_dir=%evtxecmd_dir:~0,-1%"
@@ -70,59 +76,14 @@ set "powershell_output=powershell.csv"
 "%evtxecmd_dir%\EvtxECmd.exe" -f "%evtx_dir%\%wmi_activity_operational_evtx%" --inc "%wmi_activity_operational_event_ids%" --csv "%evtxecmd_dir%" --csvf "%wmi_activity_operational_output%"
 "%evtxecmd_dir%\EvtxECmd.exe" -f "%evtx_dir%\%powershell_evtx%" --inc "%powershell_event_ids%" --csv "%evtxecmd_dir%" --csvf "%powershell_output%"
 
-
-set "combined_output=%evtxecmd_dir%\combined_output.csv"
-
-:: Copy the header from the first file to the merged file
-for /f "usebackq tokens=* delims=" %%A in ("%system_output%") do (
-	echo %%A >> "%combined_output%"
-	goto skip_header
-)
-
-:skip_header
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%system_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%security_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%powershell_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%rdp_core_ts_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%local_session_manager_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%rdp_client_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%remote_connection_manager_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%winlogon_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%winrm_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%wmi_activity_operational_output%") do (
-    echo %%A >> "%combined_output%"
-)
-for /f "usebackq skip=1 tokens=* delims=" %%A in ("%powershell_output%") do (
-    echo %%A >> "%combined_output%"
-)
-
-
 :: TODO
-:: Check if empty/1st row - delete
-:: Merge Outputs into 1 file (1 headers)
-:: Sort by time column
-
 :: Instead of changing location, maybe just add path before.exe
 :: Loop through
 :: Ask if can be made more efficient
+
+:: Check if empty/1st row - delete
+:: Merge Outputs into 1 file (1 headers)
+:: Sort by time column
 
 :: zip results?
 
