@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo Script: EvtxAnalyser
-echo Version: 1.0.2
+echo Version: 1.0.3
 echo Author: outis
 echo Requires EvtxECmd.exe
 echo.
@@ -60,49 +60,61 @@ if "%date_range_choice%"=="1" (
 echo.
 
 :: Store evtx files and respective event IDs
-set evtxs[0]=System.evtx
-set event_ids[0]=1,41,42,1074,6005,6006,6008,7045
-set output[0]=system.csv
+set evtxs[0]=Application.evtx
+set event_ids[0]=1022,1033,1034,1042,11707
+set output[0]=application.csv
 
 set evtxs[1]=Security.evtx
-set event_ids[1]=1100,1101,1102,1104,4608,4609,4624,4625,4634,4647,4648,4672,4720,4722,4723,4724,4725,4726,4778,4779,4781,4800,4801,4802,4803,5140
+set event_ids[1]=507,1100,1101,1102,1104,4608,4609,4624,4625,4634,4647,4648,4672,4697,4698,4699,4700,4701,4702,4720,4722,4723,4724,4725,4726,4778,4779,4781,4800,4801,4802,4803,5140
 set output[1]=security.csv
 
-set evtxs[2]=Microsoft-Windows-PowerShell%%%%4Operational.evtx
-set event_ids[2]=4103,4104,8193,8194,8197,40961,40962,53504
-set output[2]=powershell_operational.csv
+set evtxs[2]=System.evtx
+set event_ids[2]=1,41,42,1074,6005,6006,6008,7035,7036,7040,7045
+set output[2]=system.csv
 
-set evtxs[3]=Microsoft-Windows-RemoteDesktopServices-RdpCoreTS%%%%4Operational.evtx
-set event_ids[3]=98,131
-set output[3]=rdp_core_ts_operational.csv
+set evtxs[3]=Microsoft-Windows-PowerShell%%%%4Operational.evtx
+set event_ids[3]=4103,4104,8193,8194,8197,40961,40962,53504
+set output[3]=powershell_operational.csv
 
-set evtxs[4]=Microsoft-Windows-TerminalServices-LocalSessionManager%%%%4Operational.evtx
-set event_ids[4]=21,22,24,25,41
-set output[4]=local_session_manager_operational.csv
+set evtxs[4]=Microsoft-Windows-RemoteDesktopServices-RdpCoreTS%%%%4Operational.evtx
+set event_ids[4]=98,131
+set output[4]=rdp_core_ts_operational.csv
 
-set evtxs[5]=Microsoft-Windows-TerminalServices-RDPClient%%%%4Operational.evtx
-set event_ids[5]=1024,1102
-set output[5]=rdp_client_operational.csv
+set evtxs[5]=Microsoft-Windows-SmbClient%%%%4Security.evtx
+set event_ids[5]=31001
+set output[5]=smb_client_security.csv
 
-set evtxs[6]=Microsoft-Windows-TerminalServices-RemoteConnectionManager%%%%4Operational.evtx
-set event_ids[6]=1149
-set output[6]=remote_connection_manager_operational.csv
+set evtxs[6]=Microsoft-Windows-TaskScheduler%%%%4Operational.evtx
+set event_ids[6]=106,140,141,200,201
+set output[6]=task_scheduler_operational.csv
 
-set evtxs[7]=Microsoft-Windows-Winlogon%%%%4Operational.evtx
-set event_ids[7]=811,812
-set output[7]=winlogon_operational.csv
+set evtxs[7]=Microsoft-Windows-TerminalServices-LocalSessionManager%%%%4Operational.evtx
+set event_ids[7]=21,22,24,25,41
+set output[7]=local_session_manager_operational.csv
 
-set evtxs[8]=Microsoft-Windows-WinRM%%%%4Operational.evtx
-set event_ids[8]=6,8,15,16,33,91,168
-set output[8]=winrm_operational.csv
+set evtxs[8]=Microsoft-Windows-TerminalServices-RDPClient%%%%4Operational.evtx
+set event_ids[8]=1024,1102
+set output[8]=rdp_client_operational.csv
 
-set evtxs[9]=Microsoft-Windows-WMI-Activity%%%%4Operational.evtx
-set event_ids[9]=5857,5860,5861
-set output[9]=wmi_activity_operational.csv
+set evtxs[9]=Microsoft-Windows-TerminalServices-RemoteConnectionManager%%%%4Operational.evtx
+set event_ids[9]=1149
+set output[9]=remote_connection_manager_operational.csv
 
-set evtxs[10]=Windows PowerShell.evtx
-set event_ids[10]=400,403,800
-set output[10]=powershell.csv
+set evtxs[10]=Microsoft-Windows-Winlogon%%%%4Operational.evtx
+set event_ids[10]=811,812
+set output[10]=winlogon_operational.csv
+
+set evtxs[11]=Microsoft-Windows-WinRM%%%%4Operational.evtx
+set event_ids[11]=6,8,15,16,33,91,168
+set output[11]=winrm_operational.csv
+
+set evtxs[12]=Microsoft-Windows-WMI-Activity%%%%4Operational.evtx
+set event_ids[12]=5857,5860,5861
+set output[12]=wmi_activity_operational.csv
+
+set evtxs[13]=Windows PowerShell.evtx
+set event_ids[13]=400,403,800
+set output[13]=powershell.csv
 
 :: Update maps if DNS reachable
 ping -n 1 1.1.1.1 >nul
