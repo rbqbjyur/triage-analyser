@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 echo Script: EvtxAnalyser
-echo Version: 1.0.3
+echo Version: 1.0.4
 echo Author: outis
 echo Requires EvtxECmd.exe
 echo.
@@ -12,52 +12,70 @@ set "script_dir=%~dp0"
 set "script_dir=%script_dir:~0,-1%"
 set "evtxecmd_dir=%script_dir%"
 
-: find_evtxecmd
+:find_evtxecmd
 if not exist "%evtxecmd_dir%\EvtxECmd.exe" (
-	echo EvtxECmd.exe not found.
+    echo EvtxECmd.exe not found.
     echo "%evtxecmd_dir%\EvtxECmd.exe" doesn't exist.
-	echo Provide directory that contains EvtxECmd.exe
+    echo Provide directory that contains EvtxECmd.exe
     set /p evtxecmd_dir="> "
-	echo.
-)
-if not exist "%evtxecmd_dir%\EvtxECmd.exe" (
-	goto find_evtxecmd
+    echo.
+    goto :find_evtxecmd
 )
 
-
+:evtx_path
 :: Prompt the user for the location of the log files
 echo What is the EVTX Directory?
+echo Blank for current OS default
 set /p evtx_dir="> "
 echo.
+if "%evtx_dir%"=="" (
+    set evtx_dir=C:\Windows\System32\winevt\Logs
+)
+if not exist "%evtx_dir%" (
+    echo Directory does not exist
+    goto :evtx_path
+)
 
 :: Decide if date range or not
 set date_flags= 
 
-: date_range_decision
-echo Do you want all time, or specific date range?
-echo 1. All Time
-echo 2. Specific Date Range
-set /p date_range_choice="> "
-echo.
-if "%date_range_choice%"=="1" (
-	:: All Time
-    set date_flags= 
-) else if "%date_range_choice%"=="2" (
-	:: Specific Date Range; Ask date range
-	echo What is the start date [UTC 0]? Format: ^(yyyy-MM-dd HH:mm^)
-	set /p date_range_start="> "
-	set date_flags= --sd "!date_range_start!:00.0000000"
-	echo.
-	echo What is the end date [UTC 0]? Format: ^(yyyy-MM-dd HH:mm^)
-	set /p date_range_end="> "
-	set date_flags=!date_flags! --ed "!date_range_end!:59.9999999" 
-	echo.
+:input_date
+set time_present=
+set date_flags= 
+:: Specific Date Range; Ask date range
+echo What is the start date [UTC 0]? Format: ^(yyyy-MM-dd HH:mm^)
+echo Leave blank for no start date
+set /p date_range_start="> "
+
+if "!date_range_start!"=="" (
+    goto :end_date
 ) else (
-    echo Invalid Input %date_range_choice%
-	echo.
-	goto date_range_decision
+    call :validate_date "!date_range_start!"
+    set date_flags=!date_flags!--sd "!date_range_start!
+    if "!time_present!"=="false" (
+        set date_flags=!date_flags! 00:00
+    )
+    set date_flags=!date_flags!:00.0000000" 
 )
+:end_date
 echo.
+echo What is the end date [UTC 0]? Format: ^(yyyy-MM-dd HH:mm^)
+echo Leave blank for no end date
+set /p date_range_end="> "
+
+if "!date_range_end!"=="" (
+    goto :date_finish
+) else (
+    call :validate_date "!date_range_end!"
+    set date_flags=!date_flags!--ed "!date_range_end!
+    if "!time_present!"=="false" (
+        set date_flags=!date_flags! 23:59
+    )
+    set date_flags=!date_flags!:59.9999999" 
+)
+:date_finish
+echo.
+
 
 :: Store evtx files and respective event IDs
 set evtxs[0]=Application.evtx
@@ -69,7 +87,7 @@ set event_ids[1]=507,1100,1101,1102,1104,4608,4609,4624,4625,4634,4647,4648,4672
 set output[1]=security.csv
 
 set evtxs[2]=System.evtx
-set event_ids[2]=1,41,42,1074,6005,6006,6008,7035,7036,7040,7045
+set event_ids[2]=1,41,42,1074,6005,6006,6008,7035,7036,7040,7045,9009
 set output[2]=system.csv
 
 set evtxs[3]=Microsoft-Windows-PowerShell%%%%4Operational.evtx
@@ -89,7 +107,7 @@ set event_ids[6]=106,140,141,200,201
 set output[6]=task_scheduler_operational.csv
 
 set evtxs[7]=Microsoft-Windows-TerminalServices-LocalSessionManager%%%%4Operational.evtx
-set event_ids[7]=21,22,24,25,41
+set event_ids[7]=21,22,23,24,25,41
 set output[7]=local_session_manager_operational.csv
 
 set evtxs[8]=Microsoft-Windows-TerminalServices-RDPClient%%%%4Operational.evtx
@@ -129,17 +147,9 @@ set UTC=%datetime:~0,14%
 set output_dir=%script_dir%\EvtxAnalyser_%UTC%
 
 :: Run EvtxECmd.exe
-for /l %%I in (0,1,10) do (
+for /l %%I in (0,1,13) do (
     call :process_evtx "!evtxs[%%I]!" "!event_ids[%%I]!" "!output[%%I]!"
 )
-
-
-:: TODO
-:: Error Handling
-:: zip results
-:: Check if empty/1st row - delete
-:: Merge Outputs into 1 file (1 headers)
-:: Sort by time column
 
 
 :: Pause the script to see the output before closing
@@ -148,16 +158,53 @@ endlocal
 exit /b
 
 
+:validate_date
+set time_present=
+set "date_range=%~1"
+
+set "input_len=0"
+for /l %%A in (0,1,16) do if "!date_range:~%%A,1!" NEQ "" set /a input_len+=1
+
+if %input_len% EQU 10 (
+    echo !date_range!|findstr /R "^[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]$" >nul || (
+        echo Invalid format. Please enter in YYYY-MM-DD format.
+        echo.
+        goto :input_date
+    )
+    set time_present=false
+) else if %input_len% EQU 16 (
+    echo !date_range!|findstr /R "^[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9] [0-2][0-9]:[0-5][0-9]$" >nul || (
+        echo Invalid format. Please enter in YYYY-MM-DD HH:mm format.
+        echo.
+        goto :input_date
+    )
+    set time_present=true
+) else (
+    echo Invalid format. Please enter in YYYY-MM-DD or YYYY-MM-DD HH:mm format.
+    echo.
+    goto :input_date
+)
+goto :eof
+
+
 :process_evtx
 if exist "%evtx_dir%\%~1" (
-	call :create_output_dir
-	"%evtxecmd_dir%\EvtxECmd.exe" -f "%evtx_dir%\%~1" %DATE_FLAGS%--inc "%~2" --csv "%output_dir%" --csvf "%~3"
+    call :create_output_dir
+    "%evtxecmd_dir%\EvtxECmd.exe" -f "%evtx_dir%\%~1" %date_flags%--inc "%~2" --csv "%output_dir%" --csvf "%~3"
+
+    :: Delete <= 306 byte files
+    for %%A in ("%output_dir%\%~3") do (
+        if %%~zA LEQ 306 (
+            del "%output_dir%\%~3"
+            echo Deleted %%~zA byte "%output_dir%\%~3"
+        )
+    )
 )
 goto :eof
 
 
 :create_output_dir
 if not exist "%output_dir%" (
-	mkdir "%output_dir%"
+    mkdir "%output_dir%"
 )
 goto :eof
