@@ -2,10 +2,15 @@
 setlocal enabledelayedexpansion
 
 echo Script: EvtxAnalyser
-echo Version: 1.0.4
+echo Version: 1.0.5
 echo Author: outis
 echo Requires EvtxECmd.exe
 echo.
+
+:: Changelog
+:: 1.0.5
+::  Stop using wmic for datetime (W11 no longer includes)
+::  Add Security:4768/4769 for Kerberos Tickets
 
 :: Get script and EvtxECmd.exe directories
 set "script_dir=%~dp0"
@@ -83,7 +88,7 @@ set event_ids[0]=1022,1033,1034,1042,11707
 set output[0]=application.csv
 
 set evtxs[1]=Security.evtx
-set event_ids[1]=507,1100,1101,1102,1104,4608,4609,4624,4625,4634,4647,4648,4672,4697,4698,4699,4700,4701,4702,4720,4722,4723,4724,4725,4726,4778,4779,4781,4800,4801,4802,4803,5140
+set event_ids[1]=507,1100,1101,1102,1104,4608,4609,4624,4625,4634,4647,4648,4672,4697,4698,4699,4700,4701,4702,4720,4722,4723,4724,4725,4726,4768,4769,4778,4779,4781,4800,4801,4802,4803,5140
 set output[1]=security.csv
 
 set evtxs[2]=System.evtx
@@ -142,9 +147,8 @@ if not errorlevel 1 (
 )
 
 :: Output Directory
-for /f "tokens=2 delims==" %%I in ('wmic os get localdatetime /value') do set datetime=%%I
-set UTC=%datetime:~0,14%
-set output_dir=%script_dir%\EvtxAnalyser_%UTC%
+set "datetime=%date:~6,4%-%date:~3,2%-%date:~0,2%_%time:~0,2%-%time:~3,2%-%time:~6,2%"
+set output_dir=%script_dir%\EvtxAnalyser_%datetime%
 
 :: Run EvtxECmd.exe
 for /l %%I in (0,1,13) do (
