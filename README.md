@@ -52,6 +52,49 @@ Run `EvtxAnalyser.bat` and answer the prompts. Point it at the directory that
 holds the `.evtx` files, e.g. the `...\Windows\System32\winevt\Logs` folder of
 a KAPE or other triage collection.
 
+## Example
+
+Live system, no date range (EvtxECmd's own output trimmed):
+
+```
+Script: EvtxAnalyser
+Version: 1.0.6
+Author: outis
+Requires EvtxECmd.exe
+
+What is the EVTX Directory?
+Blank for current OS default
+>
+What is the start date [UTC 0]? Format: (yyyy-MM-dd HH:mm)
+Leave blank for no start date
+>
+What is the end date [UTC 0]? Format: (yyyy-MM-dd HH:mm)
+Leave blank for no end date
+>
+EvtxECmd version 2026.5.0
+...
+Processing C:\windows\System32\winevt\Logs\Application.evtx...
+...
+Records included: 305 Errors: 0 Events dropped: 18,987
+...
+Deleted 306 byte "C:\Tools\EvtxECmd\EvtxAnalyser_2026-10-13_15-53-04Z\rdp_core_ts_operational.csv"
+...
+Press any key to continue . . .
+```
+
+```
+C:\Tools\EvtxECmd\EvtxAnalyser_2026-10-13_15-53-04Z\
+  application.csv                               144,116
+  security.csv                                4,671,040
+  system.csv                                  1,523,783
+  powershell_operational.csv                 11,278,331
+  local_session_manager_operational.csv         118,070
+  rdp_client_operational.csv                     41,361
+  winlogon_operational.csv                    1,295,904
+  wmi_activity_operational.csv                  304,751
+  powershell.csv                              2,258,584
+```
+
 ## Limitations
 
 - Interactive only; no command-line parameters.
