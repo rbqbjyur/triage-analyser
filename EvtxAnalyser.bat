@@ -1,4 +1,8 @@
 @echo off
+::  SPDX-License-Identifier: 0BSD
+::  Copyright (C) 2024-2026 by outis
+::  EvtxAnalyser (TriageAnalyser project): runs EvtxECmd against an EVTX
+::  directory with per-log event ID filters. Changelog: see CHANGELOG.md
 setlocal enabledelayedexpansion
 
 echo Script: EvtxAnalyser
@@ -6,11 +10,6 @@ echo Version: 1.0.5
 echo Author: outis
 echo Requires EvtxECmd.exe
 echo.
-
-:: Changelog
-:: 1.0.5
-::  Stop using wmic for datetime (W11 no longer includes)
-::  Add Security:4768/4769 for Kerberos Tickets
 
 :: Get script and EvtxECmd.exe directories
 set "script_dir=%~dp0"
