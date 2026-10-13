@@ -6,6 +6,22 @@ uses [Semantic Versioning](https://semver.org/). Dates are UTC.
 
 Versions up to 1.0.x are the EVTX-only batch script `EvtxAnalyser.bat`.
 
+## 1.0.6 - 2026-10-13
+
+### Fixed
+- An invalid date no longer makes the whole run repeat with the bad date
+  passed to EvtxECmd; only that prompt is asked again.
+- After an invalid entry, a blank answer again selects the default EVTX
+  directory or an unbounded date.
+- Output folder timestamp is UTC, marked `Z`, and no longer depends on
+  regional date/time settings (no space in the name before 10:00).
+- Dates must be real (month, day incl. leap years, hour, minute) and the end
+  not before the start.
+- Paths: quoted input ("Copy as path") and `!` are accepted; the default EVTX
+  directory follows `%SystemRoot%`; no error when EvtxECmd writes no CSV.
+- A header-only CSV that cannot be deleted is reported as such, not as
+  deleted.
+
 ## 1.0.5 - 2026-01-15
 
 ### Added

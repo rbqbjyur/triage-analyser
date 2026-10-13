@@ -14,13 +14,13 @@ CSV per log. More parsers are planned.
 ## What it does
 
 - Prompts for the EVTX directory (blank = the live system's
-  `C:\Windows\System32\winevt\Logs`), then an optional start and end date/time
+  `%SystemRoot%\System32\winevt\Logs`), then an optional start and end date/time
   (UTC; date-only input means 00:00 for the start and 23:59 for the end).
 - Runs EvtxECmd once per log in the table below with `--inc` set to that log's
   event IDs, and `--sd` / `--ed` when a range is given.
-- Writes `<name>.csv` per log to `EvtxAnalyser_<timestamp>\` next to the
-  script. CSVs containing only the header row are deleted, with a console
-  message.
+- Writes `<name>.csv` per log to `EvtxAnalyser_yyyy-MM-dd_HH-mm-ssZ\` (UTC)
+  next to the script. CSVs containing only the header row are deleted, with a
+  console message.
 - Syncs EvtxECmd's maps first (`--sync`) if 1.1.1.1 answers a ping.
 
 | Log | Event IDs | CSV |
