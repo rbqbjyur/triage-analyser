@@ -1,15 +1,19 @@
 # TriageAnalyser
 
-Fast, targeted parsing of Windows triage collections. TriageAnalyser runs
-artefact (artifact) parsers against a triage collection or a live system and
-pulls out the high-value records straight away, without waiting for a full
-timeline (plaso / log2timeline) or a kitchen-sink forensic suite.
+Fast, targeted parsing of Windows triage collections: run artefact (artifact)
+parsers against a triage collection or a live system and pull out the
+high-value records straight away, without waiting for a full timeline
+(plaso / log2timeline) or a kitchen-sink forensic suite.
 
-The current release, `EvtxAnalyser.bat`, covers Windows event logs (EVTX): it
-runs [EvtxECmd](https://github.com/EricZimmerman/evtx) against a set of logs, each
-with an event ID filter aimed at logons, RDP, remote execution, services,
-scheduled tasks, PowerShell, account changes and log clearing, and writes one
-CSV per log. More parsers are planned.
+**Status: work in progress.** The released tool, `EvtxAnalyser.bat` (1.0.6),
+covers Windows event logs (EVTX) only. Broadening it into a general triage
+analyser (a PowerShell rewrite, then more parsers) is under way and not yet
+released.
+
+The current release runs [EvtxECmd](https://github.com/EricZimmerman/evtx)
+against a set of logs, each with an event ID filter aimed at logons, RDP,
+remote execution, services, scheduled tasks, PowerShell, account changes and
+log clearing, and writes one CSV per log.
 
 ## What it does
 
