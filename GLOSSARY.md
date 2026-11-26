@@ -202,15 +202,19 @@ hashes are not reference hashes.
 _Avoid_: source hash, expected hash, known-good hash
 
 **Verified**:
-Said of a zip whose bytes match its reference hash at intake. A split
-zip is verified only when every volume is.
+Said of a collection that matches its reference hash at intake: a zip,
+or a collection whose collector's own records hold a reference hash
+for it. A split zip is verified only when every volume is.
 
 **Unverified**:
 Said of a collection or loose file that no reference hash vouches for,
 always with its reason: no reference hash (a zip without one, loose
 files, a split zip with a volume lacking one), manifest only (an
-extracted collection, whose files are compared with a manifest nothing
-vouches for), or not verified by the analyser (a mounted image).
+extracted collection with no reference hash, whose files are compared
+with per-file hashes held inside it, which nothing vouches for), not
+verified by the analyser (a mounted image), or the collector's records
+not held (where what a collector's own records hold is a knowledge
+gap).
 
 **Check**:
 One named thing a run establishes, with a status of its own.
@@ -225,6 +229,13 @@ row.
 **Not passed**:
 Said of a check that could not establish what it checks, whatever the
 reason. It is never a pass.
+
+**Processing**:
+The second of the two checks a run's verdict rests on, after intake:
+that everything the run read went through its tool and into the
+outputs without error, each tool's output read, every record accounted
+for, and the outputs written and hashed. It says nothing of what the
+collection holds.
 
 **Tied**:
 Said of the collector's log, which belongs to the zip or volumes its
@@ -248,7 +259,9 @@ The time a row is sorted by.
 
 **Zone basis**:
 What a time's zone rests on: UTC as the knowledge base states it, UTC
-by the analyser's own test not yet reviewed, or unknown zone.
+by the analyser's own test not yet reviewed, host local time or the
+analysis machine's local time as the knowledge base states it, or
+unknown zone.
 
 **Unknown zone**:
 Said of a time whose zone is not established.
@@ -267,15 +280,19 @@ _Avoid_: date range, time window, window (alone)
 
 **Caveat**:
 The analyser's own wording on a row, naming something the row rests on
-that is not settled: a time whose zone is not known to be UTC, a test
-of the analyser's own not yet reviewed, or a descriptor resting on
-knowledge whose certainty is not settled.
+that is not settled, such as a time whose zone is not known to be UTC,
+a test of the analyser's own not yet reviewed, a descriptor resting on
+knowledge whose certainty is not settled, a file whose collector's
+outcome is incomplete or size changed, or records that may repeat
+another file's.
 _Avoid_: warning, note, marker
 
 **Not determined**:
-What the analyser writes where it cannot establish a value, because
-the knowledge it needs is not held or because the input does not show
-it. It is never a guess and never left empty.
+What the analyser writes where it cannot establish a value, always
+with its reason: the knowledge it needs is not held, what would show
+it was found but not read or was unreadable, or the input does not
+show it. It is never a guess and never left empty. A descriptor whose
+knowledge is not held is shown by its stand-in instead.
 
 **Knowledge gap**:
 Knowledge a release's design needs that was not held when the release
@@ -298,24 +315,20 @@ among the loose files read with it. It says nothing of whether it was
 read or what it held.
 _Avoid_: present, available, collected, parsed
 
-**Missing**:
-Said of an in-scope artefact with nothing of it in the input.
-_Avoid_: absent, not found, gap
+**Not in the input**:
+Said of an artefact the release reads with nothing of it in the input.
+It says nothing of the examined host or of how the collection was
+made.
+_Avoid_: missing, absent, not found, gap
 
 **Not read**:
-Said of a file or folder in the input that the run gives to no tool,
-always with its reason.
+Said of a file or folder in the input whose records the run does not
+take in, always with its reason: given to no tool, or its tool's
+output not taken in.
 _Avoid_: empty, skipped, ignored
 
 **Unreadable**:
 Said of a found file that the analyser or its tool could not read.
-
-**Known reason** *(provisional)*:
-An operating-system or configuration reason, held by the knowledge
-base, why an in-scope artefact is not on a host.
-
-**Unexplained**:
-Said of a missing artefact with no known reason for its absence.
 
 **Unaccounted for**:
 Said of something in the input that nothing accounts for.

@@ -94,14 +94,25 @@ inside it, as the analyst's own retrieval.
   checked against it. A log that names no hash for the zip is not tied
   to it: nothing from it is used for the host or the version, and it is
   named in Warnings.
-- An extracted collection has nothing that vouches for it. Each file
+- An extracted collection with no reference hash has nothing that
+  vouches for it (a Velociraptor or KAPE collection whose own records
+  hold one: below). Each file
   the run reads is compared once with its manifest row's SHA-256 as it
   is staged; a file whose hash differs, or that has no row, fails the
   check: it is not read, and is named in Warnings. The collection stays
   unverified, "manifest only", since the manifest sits in the same
   folder.
 - A Velociraptor or KAPE collection is checked once against its own
-  records where it carries them. A mounted image is read unverified,
+  records, as a latro collection is: a SHA-256 those records hold
+  outside the files it covers is a reference hash, so the collection
+  is verified or fails the check. Where they hold per-file hashes
+  inside the collection only, an extracted one is "manifest only",
+  each file the run reads compared with its hash as it is staged, and
+  a zipped one is read as it is, "no reference hash", with no per-file
+  compare; with neither, it is "no reference hash". Only in a release
+  shipped without knowing what those records hold is such a collection
+  unverified for that reason, "the collector's records not held"
+  (amended 2026-11-26). A mounted image is read unverified,
   "not verified by the analyser": verifying the image is left to the
   imager's own tools.
 - Loose files are not hashed and are unverified, "no reference hash". A
@@ -139,6 +150,6 @@ inside it, as the analyst's own retrieval.
 - Two hosts' files in one folder read without a collection are taken
   as from one host. Where their host names differ, the
   difference is shown in Warnings; the rows are not split.
-- An extracted collection or loose files can never be reported as
-  verified: what they agree with is a record nothing vouches for, or
-  nothing at all.
+- An extracted collection with no reference hash, or loose files, can
+  never be reported as verified: what they agree with is a record
+  nothing vouches for, or nothing at all.

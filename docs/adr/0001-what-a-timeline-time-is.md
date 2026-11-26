@@ -60,6 +60,15 @@ column as if it were known.
   of unknown zone, naming the output. The Warnings section lists
   each such output with its row count, and the overview counts these
   rows apart.
+- A time the knowledge base states is in the examined host's local
+  time, or in the analysis machine's, has that zone as its basis. It
+  is marked on its row with that zone, and, where it is converted to
+  UTC, with what the conversion rested on: a host's time-zone setting
+  read from the collection may not be the one in force when the record
+  was written. Where it is not converted, it is placed as a time of
+  unknown zone is, without a trailing `Z`. Either way the Warnings
+  section lists each such output with its row count, and the overview
+  counts these rows apart. (Added 2026-11-26.)
 
 ### Consequences
 
