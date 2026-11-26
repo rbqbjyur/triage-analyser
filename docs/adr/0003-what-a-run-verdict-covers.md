@@ -8,9 +8,8 @@ date: 2026-11-26
 ## Context and Problem Statement
 
 This decision is for the analyser's planned pipeline, in work and not
-yet released. A run ends with one verdict, PASS, WARN or FAIL (or
-STOPPED, for a run cut off before its work was done), and an exit code
-to match. Many things a run meets are not settled, and the verdict has
+yet released. A run ends with one verdict, PASS, WARN or FAIL (or STOPPED, for a run cut off before its work was
+done or refused before it began), and an exit code to match. Many things a run meets are not settled, and the verdict has
 to say which of them it covers:
 
 - whether the collection given matches its reference hash, or has none;
@@ -93,7 +92,15 @@ cannot be filled says so. The rule itself is unchanged.
   is WARN, FAIL when either fails. Exit codes: 0 PASS, 1 WARN, 2 FAIL,
   3 STOPPED (a fatal error, Ctrl+C where it can be caught, or the loose
   fallback's index reaching its limit, which stops the run before
-  analysis; every later check not run).
+  analysis; every later check not run). A refusal is STOPPED too, exit
+  3 (amended 2026-11-26): a run declined before any analysis for how
+  it was called (a value or argument not accepted, prompts nobody can
+  answer, an output parent that cannot be used, an input inside the
+  analysis machine's Windows folder or at its system volume's root)
+  prints its block on the console alone, as nothing has been written;
+  one declined for what the input holds (two collections, nothing
+  readable, a split zip not complete or not in order) writes a run
+  folder holding only its run log, ending in the same block.
 - Not graded, always shown:
   - the collection's contents: the artefacts the release reads that
     are not in the input are listed as "not in the input", never
@@ -119,7 +126,12 @@ cannot be filled says so. The rule itself is unchanged.
 
 - The verdict line names the examined host and says what it covers,
   for example "PASS - WKS-07: zip verified, every file read processed
-  (exit code 0)".
+  (exit code 0)", and the date window where one is given (ADR 0004;
+  amended 2026-11-26).
+- One exit code, 3, covers every run that did not finish, refused or
+  cut off; a caller that must tell the two apart reads the verdict
+  line. The codes are stated in the analyser's help and README and are
+  part of its contract: a code changed later is a major version.
 - An extracted collection checked only against hashes inside it, a
   mounted image or loose files can at best give WARN, since nothing
   vouches for them.

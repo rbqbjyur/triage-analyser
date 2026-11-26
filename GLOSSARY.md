@@ -273,7 +273,9 @@ _Avoid_: local time (alone)
 
 **Date window**:
 The optional start and end, in UTC, that an analyst sets for a run,
-limiting the run to what falls between them.
+limiting the run to what falls between them, or, for a time not known
+to be UTC, to what could fall between them in some zone from UTC-12:00
+to UTC+14:00.
 _Avoid_: date range, time window, window (alone)
 
 ### What a run cannot say
@@ -419,7 +421,33 @@ What a run establishes about the examined host, such as its name, its
 Windows release and its time zone, each with what it rests on.
 _Avoid_: host profile, target info
 
+### Runs
+
+**Prompted run**:
+A run given no parameter bar the ones that only choose how its output
+looks; it asks the analyst for its input and its date window.
+_Avoid_: interactive run, interactive mode
+
+**Unprompted run**:
+A run given any parameter bar the ones that only choose how its output
+looks; it never asks the analyst anything, and needs its input given.
+_Avoid_: unattended run, command-line run, batch mode
+
+**Refusal**:
+The analyser declining a run before any analysis, because of how it
+was called or of the input given (what it holds, or where it is): a
+usage error. A refused run's verdict is STOPPED.
+_Avoid_: rejection
+
+**Tools folder**:
+A folder holding the Eric Zimmerman tools as Get-ZimmermanTools lays
+them out, given for a run in place of looking the tools up.
+
 ### Outputs
+
+**Output parent**:
+The folder a run creates its run folder in.
+_Avoid_: output folder (for this)
 
 **Timeline**:
 The analyser's main output for one examined host: its actions, one row
@@ -478,10 +506,13 @@ is.
 - "Source" names neither the input nor a collection: an input is what
   the analyst gives, and an action's sources are the records it rests
   on.
-- A check that fails has one of three consequences: the run stops (a
-  zip's or volume's hash), the input is refused (a split zip not
+- A check that fails has one of three consequences: nothing is
+  analysed and the verdict is FAIL (a zip's or volume's hash), the
+  input is refused and the verdict is STOPPED (a split zip not
   complete and in order; likewise two collections in one input), or
   one file is left unread (an extracted collection's file).
+- STOPPED covers a run refused before it began as well as one cut off
+  before its work was done; a hash mismatch is FAIL, never STOPPED.
 - "Verified" and "unverified" are said only of what is given at intake,
   never of a tool or its output.
 - "Basis" never stands alone: a zone basis, an attribution basis and a
